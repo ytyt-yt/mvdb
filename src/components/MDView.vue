@@ -1,5 +1,6 @@
 <template>
-  <mu-flexbox-item :style="{ width: swidth+'px', height: sheight+'px' }">
+  <mu-flexbox-item :style="{ width: swidth+'px'}">
+    <h3>{{ view.camName }}</h3>
     <div class="md-view-div" :style="{ width: swidth+'px', height: sheight+'px' }">
       <div class="md-view-video">
         <video class="video-js" controls loop :id="vid" :width="swidth" :height="sheight">
