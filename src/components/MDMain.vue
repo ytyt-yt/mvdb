@@ -57,7 +57,7 @@ export default {
   data () {
     return {
       scenes: [],
-      sbbox: true,
+      sbbox: false,
       spose: false,
       thr: 0.8
     }

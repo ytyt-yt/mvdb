@@ -105,6 +105,22 @@ export default {
         }
         this.bbox.push(bs)
       }
+    },
+    mainloop (iv) {
+      setInterval(() => {
+        if (this.player.paused() && !this.player.ended() && this.ps === 'play') {
+          console.log('pause')
+          this.$emit('dbpause')
+        } else if (!this.player.paused() && this.ps === 'pause') {
+          console.log('play')
+          this.$emit('dbplay')
+        }
+        let curTime = this.player.currentTime()
+        let curFrm = Math.round(curTime * this.view.fps)
+        if (this.lastFrm !== curFrm) {
+          this.lastFrm = curFrm
+        }
+      }, iv)
     }
   },
   computed: {
@@ -126,26 +142,21 @@ export default {
   mounted () {
     this.player = videojs('#' + this.vid)
     this.player.src(this.view.src)
-    this.$http.get(this.view.bboxSrc).then((d) => {
-      this.bboxOri = d.body
-      this.$http.get(this.view.poseSrc).then((d2) => {
-        this.poseOri = d2.body
-        setInterval(() => {
-          if (this.player.paused() && !this.player.ended() && this.ps === 'play') {
-            console.log('pause')
-            this.$emit('dbpause')
-          } else if (!this.player.paused() && this.ps === 'pause') {
-            console.log('play')
-            this.$emit('dbplay')
-          }
-          let curTime = this.player.currentTime()
-          let curFrm = Math.round(curTime * this.view.fps)
-          if (this.lastFrm !== curFrm) {
-            this.lastFrm = curFrm
-          }
-        }, 500)
+    if (this.sbbox || this.spose) {
+      this.$http.get(this.view.bboxSrc).then((d) => {
+        this.bboxOri = d.body
+        if (this.spose) {
+          this.$http.get(this.view.poseSrc).then((d2) => {
+            this.poseOri = d2.body
+            this.mainloop(500)
+          })
+        } else {
+          this.mainloop(200)
+        }
       })
-    })
+    } else {
+      this.mainloop(100)
+    }
   }
 }
 </script>
